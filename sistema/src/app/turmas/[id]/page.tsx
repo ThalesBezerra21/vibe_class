@@ -3,13 +3,15 @@ import { getStudents } from "@/actions/students";
 import { notFound } from "next/navigation";
 import { ClassDetail } from "./class-detail";
 
-export default async function ClassDetailPage({ params }: { params: { id: string } }) {
+export default async function ClassDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  
   const [classes, allStudents] = await Promise.all([
     getClasses(),
     getStudents(),
   ]);
 
-  const classRoom = classes.find(c => c.id === params.id);
+  const classRoom = classes.find(c => c.id === id);
   
   if (!classRoom) {
     notFound();
