@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { ThemeToggle } from "./theme-toggle";
-import { ProcessEmailsButton } from "./process-emails-button";
+import { SettingsDialog } from "./settings-dialog";
 
 export function Header() {
   return (
@@ -28,7 +28,7 @@ export function Header() {
           </nav>
         </div>
         <div className="flex flex-1 items-center justify-end gap-2">
-          <ProcessEmailsButton />
+          <SettingsDialog />
           <ThemeToggle />
         </div>
       </div>

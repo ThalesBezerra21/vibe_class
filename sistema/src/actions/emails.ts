@@ -2,6 +2,7 @@
 
 import fs from "fs/promises";
 import path from "path";
+import nodemailer from "nodemailer";
 import { getStudents } from "./students";
 import { getClasses } from "./classes";
 
@@ -61,6 +62,20 @@ export async function processDailyEmails() {
   const studentIds = Object.keys(queue);
   if (studentIds.length === 0) return { message: "Nenhum e-mail na fila", count: 0 };
 
+  // Setup nodemailer transporter using env variables
+  // SMTP_HOST, SMTP_PORT, SMTP_USER, SMTP_PASS, SMTP_FROM
+  const transporter = nodemailer.createTransport({
+    host: process.env.SMTP_HOST || "smtp.gmail.com",
+    port: parseInt(process.env.SMTP_PORT || "587"),
+    secure: process.env.SMTP_SECURE === "true", // true for 465, false for other ports
+    auth: {
+      user: process.env.SMTP_USER,
+      pass: process.env.SMTP_PASS,
+    },
+  });
+
+  const fromEmail = process.env.SMTP_FROM || "vibeclass@seudominio.com";
+
   for (const studentId of studentIds) {
     const student = students.find((s) => s.id === studentId);
     if (!student) continue;
@@ -77,23 +92,45 @@ export async function processDailyEmails() {
       return acc;
     }, {} as Record<string, { className: string, changes: Record<string, string> }>);
 
-    console.log(`\n================= MOCK EMAIL ENVIADO =================`);
-    console.log(`Para: ${student.email}`);
-    console.log(`Assunto: Atualização Diária de Avaliações - Vibe Class`);
-    console.log(`Mensagem: Olá ${student.name},\n`);
-    console.log(`Houve modificações em suas avaliações hoje:\n`);
-    
+    let htmlMessage = `<p>Olá <b>${student.name}</b>,</p><p>Houve modificações em suas avaliações hoje:</p>`;
+    let textMessage = `Olá ${student.name},\nHouve modificações em suas avaliações hoje:\n\n`;
+
     for (const [classId, classData] of Object.entries(updatesByClass)) {
-      console.log(`Turma: ${classData.className}`);
+      htmlMessage += `<h3>Turma: ${classData.className}</h3><ul>`;
+      textMessage += `Turma: ${classData.className}\n`;
       for (const [target, newValue] of Object.entries(classData.changes)) {
-          console.log(`- ${target.charAt(0).toUpperCase() + target.slice(1)}: ${newValue || "Removido"}`);
+          const targetName = target.charAt(0).toUpperCase() + target.slice(1);
+          const val = newValue || "Removido";
+          htmlMessage += `<li><b>${targetName}</b>: ${val}</li>`;
+          textMessage += `- ${targetName}: ${val}\n`;
       }
-      console.log("");
+      htmlMessage += `</ul>`;
+      textMessage += `\n`;
     }
-    console.log(`======================================================\n`);
+
+    try {
+      if (process.env.SMTP_USER) {
+        await transporter.sendMail({
+          from: `"Vibe Class" <${fromEmail}>`,
+          to: student.email,
+          subject: "Atualização Diária de Avaliações - Vibe Class",
+          text: textMessage,
+          html: htmlMessage,
+        });
+        console.log(`E-mail real enviado para ${student.email}`);
+      } else {
+        // Fallback or local testing missing credentials
+        console.log(`\n================= MOCK EMAIL ENVIADO (Env faltando SMTP_USER) =================`);
+        console.log(`Para: ${student.email}`);
+        console.log(textMessage);
+        console.log(`======================================================\n`);
+      }
+    } catch (e) {
+      console.error(`Erro enviando e-mail para ${student.email}`, e);
+    }
   }
 
   // Clear queue after sending
   await fs.writeFile(queueFilePath, "{}", "utf-8");
-  return { message: "E-mails enviados com sucesso!", count: studentIds.length };
+  return { message: "E-mails despachados na rotina diária", count: studentIds.length };
 }
