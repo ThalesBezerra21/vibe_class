@@ -1,4 +1,5 @@
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export default function Home() {
   return (
@@ -11,9 +12,11 @@ export default function Home() {
           O gerenciador de sala de aula moderno e intuitivo.
         </p>
         <div className="pt-4">
-          <Button size="lg" className="w-full sm:w-auto font-semibold">
-            Começar Agora
-          </Button>
+          <Link href="/alunos">
+            <Button size="lg" className="w-full sm:w-auto font-semibold">
+              Começar Agora / Gerenciar Alunos
+            </Button>
+          </Link>
         </div>
       </main>
     </div>
