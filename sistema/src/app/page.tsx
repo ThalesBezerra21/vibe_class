@@ -11,10 +11,15 @@ export default function Home() {
         <p className="text-lg sm:text-xl text-muted-foreground">
           O gerenciador de sala de aula moderno e intuitivo.
         </p>
-        <div className="pt-4">
+        <div className="pt-4 flex flex-col sm:flex-row gap-4">
           <Link href="/alunos">
             <Button size="lg" className="w-full sm:w-auto font-semibold">
-              Começar Agora / Gerenciar Alunos
+              Gerenciar Alunos
+            </Button>
+          </Link>
+          <Link href="/turmas">
+            <Button size="lg" variant="secondary" className="w-full sm:w-auto font-semibold">
+              Gerenciar Turmas
             </Button>
           </Link>
         </div>
