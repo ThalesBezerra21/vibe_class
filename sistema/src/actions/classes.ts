@@ -76,10 +76,23 @@ export async function toggleStudentEnrollment(classId: string, studentId: string
   }
 }
 
+import { addToQueue } from "./emails";
+
 export async function updateStudentEvaluation(classId: string, studentId: string, evaluation: Partial<StudentEvaluation>) {
   const classes = await getClasses();
   const cl = classes.find((c) => c.id === classId);
   if (cl && cl.enrolledStudents.includes(studentId)) {
+    // Add to email queue
+    if (evaluation.requisitos !== undefined) {
+      await addToQueue(studentId, classId, cl.description, "requisitos", evaluation.requisitos);
+    }
+    if (evaluation.testes !== undefined) {
+      await addToQueue(studentId, classId, cl.description, "testes", evaluation.testes);
+    }
+    if (evaluation.implementacao !== undefined) {
+      await addToQueue(studentId, classId, cl.description, "implementacao", evaluation.implementacao);
+    }
+
     cl.evaluations[studentId] = { ...cl.evaluations[studentId], ...evaluation, studentId };
     await fs.writeFile(dataFilePath, JSON.stringify(classes, null, 2));
   }

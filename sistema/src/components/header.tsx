@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { ThemeToggle } from "./theme-toggle";
+import { ProcessEmailsButton } from "./process-emails-button";
 
 export function Header() {
   return (
@@ -26,7 +27,8 @@ export function Header() {
             </Link>
           </nav>
         </div>
-        <div className="flex flex-1 items-center justify-end">
+        <div className="flex flex-1 items-center justify-end gap-2">
+          <ProcessEmailsButton />
           <ThemeToggle />
         </div>
       </div>
