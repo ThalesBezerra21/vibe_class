@@ -79,15 +79,31 @@ export function ClassDetail({ classRoom: initialClassRoom, allStudents }: { clas
       </div>
 
       <div className="space-y-4">
-        <h2 className="text-2xl font-semibold">Avaliações dos Alunos</h2>
+        <div className="flex flex-col sm:flex-row justify-between gap-4 items-start sm:items-end">
+          <h2 className="text-2xl font-semibold">Avaliações dos Alunos</h2>
+          <div className="flex flex-wrap gap-2 text-xs">
+            <div className="flex items-center gap-1.5 rounded-md bg-secondary/50 px-2 py-1">
+              <div className="h-2 w-2 rounded-full bg-red-500"></div>
+              <span className="font-medium">MANA (Meta Ainda Não Atingida)</span>
+            </div>
+            <div className="flex items-center gap-1.5 rounded-md bg-secondary/50 px-2 py-1">
+              <div className="h-2 w-2 rounded-full bg-yellow-600"></div>
+              <span className="font-medium">MPA (Meta Parcialmente Atingida)</span>
+            </div>
+            <div className="flex items-center gap-1.5 rounded-md bg-secondary/50 px-2 py-1">
+              <div className="h-2 w-2 rounded-full bg-green-600"></div>
+              <span className="font-medium">MA (Meta Atingida)</span>
+            </div>
+          </div>
+        </div>
         <div className="rounded-md border">
           <Table>
             <TableHeader>
               <TableRow>
                 <TableHead>Nome e CPF</TableHead>
-                <TableHead className="w-36 text-center">Reqs.</TableHead>
+                <TableHead className="w-36 text-center">Requisitos</TableHead>
                 <TableHead className="w-36 text-center">Testes</TableHead>
-                <TableHead className="w-36 text-center">Imp.</TableHead>
+                <TableHead className="w-36 text-center">Implementação</TableHead>
                 <TableHead className="text-right">Ação</TableHead>
               </TableRow>
             </TableHeader>
