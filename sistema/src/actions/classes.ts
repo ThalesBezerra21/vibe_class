@@ -3,10 +3,13 @@
 import fs from "fs/promises";
 import path from "path";
 
+export type EvaluationGrade = "MANA" | "MPA" | "MA" | "";
+
 export interface StudentEvaluation {
   studentId: string;
-  notes: string;
-  grade: number | null;
+  requisitos: EvaluationGrade;
+  testes: EvaluationGrade;
+  implementacao: EvaluationGrade;
 }
 
 export interface ClassRoom {
@@ -67,7 +70,7 @@ export async function toggleStudentEnrollment(classId: string, studentId: string
       delete cl.evaluations[studentId]; // remove evaluation when unenrolled
     } else {
       cl.enrolledStudents.push(studentId);
-      cl.evaluations[studentId] = { studentId, notes: "", grade: null };
+      cl.evaluations[studentId] = { studentId, requisitos: "", testes: "", implementacao: "" };
     }
     await fs.writeFile(dataFilePath, JSON.stringify(classes, null, 2));
   }
