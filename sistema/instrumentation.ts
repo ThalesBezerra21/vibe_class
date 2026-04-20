@@ -1,10 +1,9 @@
-import { getSettings } from "./src/actions/settings";
-
 let currentTask: any = null;
 
 export async function register() {
   if (process.env.NEXT_RUNTIME === 'nodejs') {
     const cron = (await import('node-cron')).default;
+    const { getSettings } = await import("./src/actions/settings");
     
     async function setupCronJob() {
       if (currentTask) {
