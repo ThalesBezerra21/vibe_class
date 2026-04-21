@@ -29,7 +29,7 @@ export async function getStudents(): Promise<Student[]> {
 
 export async function addStudent(student: Omit<Student, "id">) {
   const students = await getStudents();
-  const newStudent = { ...student, id: Date.now().toString() };
+  const newStudent = { ...student, id: crypto.randomUUID() };
   students.push(newStudent);
   await fs.writeFile(dataFilePath, JSON.stringify(students, null, 2));
   return newStudent;
