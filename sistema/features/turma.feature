@@ -21,3 +21,13 @@ Funcionalidade: Gerenciamento de Turmas e Matrículas
     E que o aluno de CPF "111.222.333-44" está matriculado na turma "Banco de Dados"
     Quando eu avalio o aluno de CPF "111.222.333-44" na turma "Banco de Dados" com a nota "MA" em "requisitos"
     Então a avaliação do aluno de CPF "111.222.333-44" na turma "Banco de Dados" no critério "requisitos" deve ser "MA"
+
+  Cenário: Editar dados de uma turma existente
+    Dado que a turma "Física" no ano 2026, semestre 1 já existe
+    Quando eu atualizo a turma "Física" para o ano 2027 e semestre 2
+    Então os dados retornados para a turma "Física" devem conter o ano 2027 e semestre 2
+
+  Cenário: Excluir uma turma existente
+    Dado que a turma "Cálculo" no ano 2026, semestre 1 já existe
+    Quando eu excluo a turma "Cálculo"
+    Então o sistema não deve listar a turma "Cálculo" na lista de turmas

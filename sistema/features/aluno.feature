@@ -13,3 +13,8 @@ Funcionalidade: Gerenciamento de Alunos
     Dado que um aluno com o nome "Pedro Alves", CPF "333.333.333-33", Email "pedro@email.com" já está cadastrado
     Quando eu atualizo o email do aluno de CPF "333.333.333-33" para "novo-email-pedro@email.com"
     Então os dados retornados para o CPF "333.333.333-33" devem conter o email "novo-email-pedro@email.com"
+
+  Cenário: Excluir um aluno existente
+    Dado que um aluno com o nome "Roberto Silva", CPF "999.888.777-66", Email "roberto@email.com" já está cadastrado
+    Quando eu excluo o aluno de CPF "999.888.777-66"
+    Então o sistema não deve listar o aluno de CPF "999.888.777-66" na lista de alunos registrados

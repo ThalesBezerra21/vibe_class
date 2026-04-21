@@ -1,6 +1,6 @@
 import { Given, When, Then, Before } from '@cucumber/cucumber';
 import assert from 'assert';
-import { getClasses, addClass, deleteClass, toggleStudentEnrollment, updateStudentEvaluation } from '../../src/actions/classes';
+import { getClasses, addClass, updateClass, deleteClass, toggleStudentEnrollment, updateStudentEvaluation } from '../../src/actions/classes';
 import { getStudents, addStudent, deleteStudent } from '../../src/actions/students';
 
 // Hook de limpeza e preparação para a suíte de Turmas
@@ -8,7 +8,7 @@ Before(async function () {
   // Limpeza de Turmas e Alunos de teste
   const turmas = await getClasses();
   for (const turma of turmas) {
-    if (['Engenharia de Software', 'Algoritmos', 'Banco de Dados'].includes(turma.description)) {
+    if (['Engenharia de Software', 'Algoritmos', 'Banco de Dados', 'Física', 'Cálculo'].includes(turma.description)) {
       await deleteClass(turma.id);
     }
   }
@@ -130,4 +130,41 @@ Then('a avaliação do aluno de CPF {string} na turma {string} no critério {str
   const avaliacao = turma.evaluations[aluno.id];
   assert.ok(avaliacao, `Não existe avaliação registrada para o aluno ID ${aluno.id}`);
   assert.strictEqual(avaliacao[criterio as keyof typeof avaliacao], notaEsperada, `A nota de ${criterio} não confere.`);
+});
+
+// --- CENÁRIO: Editar dados de uma turma existente ---
+
+When('eu atualizo a turma {string} para o ano {int} e semestre {int}', async function (nomeDaTurma, ano, semestre) {
+  const turmas = await getClasses();
+  const turma = turmas.find(t => t.description === nomeDaTurma);
+  assert.ok(turma, `A turma ${nomeDaTurma} deveria existir para sofrer atualização.`);
+  
+  await updateClass(turma.id, { year: ano, semester: semestre });
+});
+
+Then('os dados retornados para a turma {string} devem conter o ano {int} e semestre {int}', async function (nomeDaTurma, anoEsperado, semestreEsperado) {
+  const turmas = await getClasses();
+  const turma = turmas.find(t => t.description === nomeDaTurma);
+  
+  assert.ok(turma, `A turma ${nomeDaTurma} não foi encontrada.`);
+  assert.strictEqual(turma.year, anoEsperado, 'O ano não foi atualizado corretamente.');
+  assert.strictEqual(turma.semester, semestreEsperado, 'O semestre não foi atualizado corretamente.');
+});
+
+// --- CENÁRIO: Excluir uma turma existente ---
+
+When('eu excluo a turma {string}', async function (nomeDaTurma) {
+  const turmas = await getClasses();
+  const turma = turmas.find(t => t.description === nomeDaTurma);
+  
+  if (turma) {
+    await deleteClass(turma.id);
+  }
+});
+
+Then('o sistema não deve listar a turma {string} na lista de turmas', async function (nomeDaTurma) {
+  const turmas = await getClasses();
+  const turma = turmas.find(t => t.description === nomeDaTurma);
+  
+  assert.strictEqual(turma, undefined, `A turma ${nomeDaTurma} continua na base após a deleção.`);
 });
